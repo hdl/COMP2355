@@ -16,12 +16,12 @@ using namespace std;
 // first - index of first array item to set
 // count - number of items to set
 void InitValues(double *a, int first, int count) {
-    cout << "init thread begin" << endl;
+    // cout << "init thread begin" << endl;
     int limit = first + count;
     for (int i = first; i < limit; ++i) {
         a[i] = sqrt((double) i);
     }
-    cout << "init thread end" << endl;
+    // cout << "init thread end" << endl;
 }
 
 // SumValues - sum array values.
@@ -31,14 +31,14 @@ void InitValues(double *a, int first, int count) {
 // first - index of first array item to be summed
 // count - number of items to sum
 void SumValues(const double *a, double *sum, int first, int count) {
-    cout << "sum thread begin" << endl;
+    // cout << "sum thread begin" << endl;
     double sumTmp = 0.0;
     int limit = first + count;
     for (int i = first; i < limit; ++i) {
         sumTmp += a[i];
     }
     *sum = sumTmp;
-    cout << "sum thread end" << endl;
+    // cout << "sum thread end" << endl;
 }
 
 // ThreadedSum - initialize and sum a large array using
@@ -65,14 +65,23 @@ double ThreadedSum(int numThreads, size_t arraySize) {
         return 0;
 
     }else{
+        int i;
         double sumI[numThreads];
-        for(int i=0; i<1; i++){
-            sumThreadsVector.push_back(std::thread(SumValues, a, &sumI[i], 0, arraySize));
+        // for example we have 4 threads
+        // first 3 threads
+        int perThreadcount=arraySize/numThreads;
+        for(i=0; i<numThreads-1; i++){
+            sumThreadsVector.push_back(std::thread(SumValues, a, &sumI[i], i * perThreadcount, perThreadcount));
         }
+        //last Thread
+        int lastThreadcout=arraySize - (numThreads-1)*perThreadcount;
+        i=numThreads-1;
+        sumThreadsVector.push_back(std::thread(SumValues, a, &sumI[i], i * perThreadcount, lastThreadcout));
+        
         for(auto &th: sumThreadsVector){
             th.join(); 
         }
-        for(int i=0; i<numThreads; i++){
+        for(i=0; i<numThreads; i++){
             sum+=sumI[i]; 
         } 
         // undo init
@@ -101,7 +110,7 @@ int main(int argc, const char * argv[])
 
     // Run for each power of 2 from 20 to 26 (You may want to start
     // with 10 to 15 for testing)
-    for (int power = 20; power <= 20; power++)
+    for (int power = 20; power <= 26; power++)
     {
         t.StartTimer();
         double sum1 = ThreadedSum(1, 1<<power);
