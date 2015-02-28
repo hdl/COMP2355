@@ -14,7 +14,8 @@ private:
 };
 
 MyString::MyString(){
-    string=NULL;
+    string = new char[1];
+    string[0]='\0';
 }
 
 MyString::MyString(const MyString &init){
@@ -22,9 +23,10 @@ MyString::MyString(const MyString &init){
     if(len == 0)
         string = NULL;
     else{
-        string = new char[len];
+        string = new char[len+1];
         for(int i =0; i<len; i++)
             string[i] = init.cString()[i];
+        string[len]='\0';
     }
 }
 
@@ -33,10 +35,11 @@ MyString::MyString(const char* init){
     while(init[len]!='\0')
         len++;
 
-    this->string = new char[len];
+    this->string = new char[len+1];
     for(int i=0; i<len; i++){
         this->string[i] = init[i];
     }
+    string[len]='\0';
 }
 
 MyString::~MyString(){
@@ -48,10 +51,11 @@ MyString& MyString::operator=(const MyString &init){
     if(this->string!=NULL)
         delete [] this->string;
     int len = init.length();
-    this->string = new char[len];
+    this->string = new char[len+1];
     for(int i=0; i<len; i++){
         this->string[i]=init.cString()[i];
     }
+    string[len]='\0';
     return *this;
 }
 
